@@ -1,0 +1,16 @@
+body{
+    background: #202020;
+}
+
+canvas{
+    display: block; 
+    /* every canvas is to be given this property so that they can overlap */
+}
+
+#canvasBg{
+    background: #ffffff;
+}
+
+#overlapping canvas{
+    margin: -600px0 0;
+}
