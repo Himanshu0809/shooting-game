@@ -24,7 +24,7 @@ imgSprite.addEventListener("load", init, false); //loading the image, initialize
 
 function init() {
     document.addEventListener("keydown", function(e){ checkKey(e, true);}, false); 
-    /*it checks the up key to move the player up
+    /*it checks when the key is pressed
     e is the event parameter passed to the function
     true is passed as the second parameter*/
    
@@ -141,7 +141,7 @@ Player.prototype.checkObstacleCollide=function(newDrawX, newDrawY){
     newCenterX=newDrawX+(this.width/2),
     newCenterY=newDrawY+(this.height/2);
     for(var i=0;i<obstacles.length;i++){
-        if(obstacles[i].leftX<newCenterX && newCenterX<obstacles[i].rightX && bstacles[i].topY-20<newCenterY&& newCenterY<obstacles[i].bottomy-20){
+        if(obstacles[i].leftX<newCenterX && newCenterX<obstacles[i].rightX && obstacles[i].topY-20<newCenterY&& newCenterY<obstacles[i].bottomY-20){
             obstacleCounter=0;
         }else{
             obstacleCounter++;
@@ -219,6 +219,6 @@ function defineObstacles(){
         new Obstacle(296, 379, rockDimensions, rockDimensions),
         new Obstacle(295, 25, 150, bushHeight),
         new Obstacle(570, 138, 150, bushHeight),
-        new Obstacle(605, 492, 150, bushHeight)
+        new Obstacle(605, 492, 90, bushHeight)
     ];
 }
