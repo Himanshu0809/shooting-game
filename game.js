@@ -85,7 +85,7 @@ function Player() {
     this.IsDownKey=false;
     this.isLeftKey=false;
     this.isSpaceBar=false;
-    //this.isShooting=false;
+    this.isShooting=false;
     var numBullets=10;
     this.bullets=[];
     this.currentBullet = 0; //keep a track of the current bullet fired
@@ -99,12 +99,12 @@ Player.prototype.update = function () { //adding a method to the object
     this.centerY = this.drawY + (this.height / 2);
     //calculating the new centerX and centerY
     this.checkDirection();
-    //this.checkShooting();
-    // this.updateAllBullets();
+    this.checkShooting();
+    this.updateAllBullets();
 };
 
 Player.prototype.draw = function () { 
-    // this.drawAllBullets();
+    this.drawAllBullets();
     ctxEntities.drawImage(imgSprite, this.srcX, this.srcY, this.width, this.height, this.drawX, this.drawY, this.width, this.height);
 };
 
@@ -151,6 +151,35 @@ Player.prototype.checkObstacleCollide=function(newDrawX, newDrawY){
         return false;
     }else{
         return true;
+    }
+}
+
+Player.prototype.checkShooting=function(){
+    if(this.isSpaceBar&&!this.isShooting){
+        this.isShooting=true;
+        this.bullets[this.currentBullet].fire(this.centerX, this.centerY);
+        this.currentBullet++;
+        if(this.currentBullet>=this.bullets.length){
+            this.currentBullet=0;
+        }
+    }else if(!this.isSpaceBar){
+        this.isShooting=false;
+    }
+}
+
+Player.prototype.updateAllBullets=function(){
+    for(var i=0;i<this.bullets.length;i++){
+        if(this.bullets[i].isFlying){
+            this.bullets[i].update(); 
+        }
+    }
+}
+
+Player.prototype.drawAllBullets=function(){
+    for(var i=0;i<this.bullets.length;i++){
+        if(this.bullets[i].isFlying){
+            this.bullets[i].draw(); 
+        }
     }
 }
 
@@ -327,9 +356,9 @@ function Bullet(){
 Bullet.prototype.update=function(){
     this.drawX+=this.xVel;
     this.drawY+=this.yVel;
-    //this.checkHitEnemy();
-    //this.checkHitObstacle();
-    //this.checkOutOfBounds();
+    this.checkHitEnemy();
+    this.checkHitObstacle();
+    this.checkOutOfBounds();
 }
 
 Bullet.prototype.draw=function(){
@@ -342,6 +371,7 @@ Bullet.prototype.draw=function(){
 
 Bullet.prototype.fire=function(startX, startY){
     var soundEffect=new Audio("audio/shooting.wav"); 
+    soundEffect.play();
     this.drawX=startX;
     this.drawY=startY;
     if(player1.srcX===0)
@@ -360,3 +390,38 @@ Bullet.prototype.fire=function(startX, startY){
     }
     this.isFlying=true;
 }
+
+Bullet.prototype.recylce=function(){
+    this.isFlying=false;
+}
+
+Bullet.prototype.checkHitEnemy=function(){
+    for(var i=0;i<enemies.length;i++){
+        if(collision(this,enemies[i])&&!enemies[i].isDead){
+            this.recylce();
+            enemies[i].die(); 
+        }
+    }
+}
+
+Bullet.prototype.checkHitObstacle=function(){
+    for(var i=0;i<obstacles.length;i++){
+        if(collision(this,obstacles[i])){
+           this.recylce();
+        }
+    }
+}
+
+Bullet.prototype.checkOutOfBounds=function(){
+    if(outOfBounds(this, this.drawX, this.drawY)){
+        this.recylce();
+    }
+}
+
+function collision(a, b) {//takes two objects a, b as parameters{
+    return a.drawX<=b.drawX+b.width &&
+        a.drawX>=b.drawY &&
+        a.drawY<=b.drawY+b.height &&
+        a.drawY>=b.drawY;
+        //checks if two objects are not colliding i.e. one is not inside the other
+}       
