@@ -86,12 +86,12 @@ function Player() {
     this.isLeftKey=false;
     this.isSpaceBar=false;
     //this.isShooting=false;
-    //var numBullets=10;
-    //this.bullets=[];
-    //this.currentBullet = 0; //keep a track of the current bullet fired
-    // for(var i=0; i<numBullets; i++){
-    //     this.bullets[this.bullets.length]=new Bullet(); //adding a new bullet
-    // }
+    var numBullets=10;
+    this.bullets=[];
+    this.currentBullet = 0; //keep a track of the current bullet fired
+    for(var i=0; i<numBullets; i++){
+        this.bullets[this.bullets.length]=new Bullet(); //adding a new bullet
+    }
 }
 
 Player.prototype.update = function () { //adding a method to the object
@@ -100,11 +100,11 @@ Player.prototype.update = function () { //adding a method to the object
     //calculating the new centerX and centerY
     this.checkDirection();
     //this.checkShooting();
-    //this.updateAllBullets();
+    // this.updateAllBullets();
 };
 
 Player.prototype.draw = function () { 
-    //this.drawAllBullets();
+    // this.drawAllBullets();
     ctxEntities.drawImage(imgSprite, this.srcX, this.srcY, this.width, this.height, this.drawX, this.drawY, this.width, this.height);
 };
 
@@ -310,4 +310,53 @@ function drawAllEnemies(){
     for(var i=0;i<enemies.length;i++){
         enemies[i].draw();
     } 
+}
+
+function Bullet(){
+    this.radius=2;
+    this.width=this.radius*2;
+    this.height=this.radius*2;
+    this.drawX=0;
+    this.drawY=0;
+    this.isFlying=false;
+    this.xVel=0; //x velocity
+    this.yVel=0;
+    this.speed=6;
+}
+
+Bullet.prototype.update=function(){
+    this.drawX+=this.xVel;
+    this.drawY+=this.yVel;
+    //this.checkHitEnemy();
+    //this.checkHitObstacle();
+    //this.checkOutOfBounds();
+}
+
+Bullet.prototype.draw=function(){
+    ctxEntities.fillStyle="white";
+    ctxEntities.beginPath();
+    ctxEntities.arc(this.drawX, this.drawY, this.radius, 0, Math.PI*2, false);
+    ctxEntities.closePath();
+    ctxEntities.fill();
+}
+
+Bullet.prototype.fire=function(startX, startY){
+    var soundEffect=new Audio("audio/shooting.wav"); 
+    this.drawX=startX;
+    this.drawY=startY;
+    if(player1.srcX===0)
+    {
+        this.xVel=0;
+        this.yVel=this.speed;
+    }else if(player1.srcX===35){
+        this.xVel=0;
+        this.yVel=-this.speed;
+    }else if(player1.srcX===70){
+        this.xVel=-this.speed;
+        this.yVel=0;
+    }else if(player1.srcX===105){
+        this.xVel=this.speed;
+        this.yVel=0;
+    }
+    this.isFlying=true;
 }
